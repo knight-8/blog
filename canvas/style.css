@@ -1,0 +1,22 @@
+body{
+    margin:0;
+    padding:0;
+}
+#cav{
+    
+    background-color: brown;
+}
+.actions{
+    position:fixed;
+    top:0;
+    right:0;
+}
+.actions > #brush{
+    display:none;
+}
+.actions.x > #brush{
+    display: inline-block;
+}
+.actions.x > #eraser{
+    display: none;
+}

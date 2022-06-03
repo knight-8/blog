@@ -1,0 +1,145 @@
+<!--
+ * @Author: jiajunwa@outlook.com jiajunwa@outlook.com
+ * @Date: 2022-05-30 18:22:43
+ * @LastEditors: jiajunwa@outlook.com jiajunwa@outlook.com
+ * @LastEditTime: 2022-06-02 14:16:24
+ * @FilePath: \blog\js-learn\index.html
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>JS Bin</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <canvas id="cav"></canvas>
+    <canvas id="stockGraph" width="150" height="150">
+        current stock price: $3.15 +0.15
+      </canvas>
+      
+      <canvas id="clock" width="150" height="150">
+
+      </canvas>
+      <div id="actions" class="actions">
+        <button id="brush">画笔</button>
+        <button id="eraser">橡皮擦</button>
+      </div>
+  <script>
+    
+    
+    var cav = document.getElementById('cav');
+    var cav_cot = cav.getContext('2d')
+    var using = false
+    var painting = false
+    var lastPoint = {x: undefined, y:undefined}
+    var newPoint = {x : undefined, y : undefined}
+    
+    function autoSetCavSize() {
+        function setCavSize(){
+        var pageWidth = document.documentElement.clientWidth
+        var pageHeight = document.documentElement.clientHeight
+        cav.width = pageWidth
+        cav.height = pageHeight  
+    }
+    window.onresize = function() {
+        setCavSize()
+    }
+    setCavSize() 
+}
+    autoSetCavSize()  //设置cav的宽高与自动变更
+     
+    
+
+    
+    cav_cot.fillStyle = 'yellow'
+    cav_cot.fillRect(20, 10, 90, 80)
+
+    cav_cot.strokeStyle = 'blue'
+    cav_cot.strokeRect(20, 10, 91, 81)
+    
+    cav_cot.clearRect(50, 20, 10, 10)
+    cav_cot.clearRect(90, 90, 20, 20)
+    
+    cav_cot.fillStyle = 'rgba(0, 0, 200, .5)'
+    cav_cot.beginPath();
+    cav_cot.moveTo(80, 80);
+    cav_cot.lineTo(120, 100);
+    cav_cot.stroke()
+    
+
+    cav_cot.strokeStyle = 'pink'
+    cav_cot.beginPath()
+    cav_cot.arc(150, 100, 30, 0, Math.PI/.5)
+    cav_cot.arc(150, 100, 20, 0, Math.PI*2)
+    cav_cot.stroke()
+
+    function drawCircle(x, y, radius) {
+        cav_cot.beginPath()
+        cav_cot.fillStyle = 'pink'
+        cav_cot.arc(x, y, radius, 0, Math.PI*2)
+        cav_cot.fill()
+    }
+    
+    function drawLine(x1, y1, x2, y2, width) {
+        cav_cot.beginPath()
+        cav_cot.strokeStyle = 'pink'
+        cav_cot.lineWidth = width
+        cav_cot.moveTo(x1, y1)
+        cav_cot.lineTo(x2, y2)
+        cav_cot.stroke()
+        cav_cot.closePath()
+    }
+
+    eraser.onclick = function() {
+        using = true
+        actions.className = 'actions x'
+    }
+    brush.onclick = function() {
+        using = false
+        actions.className = 'actions'
+    }
+
+    function usingEraser(x, y) {
+        cav_cot.beginPath
+        painting = false
+        cav_cot.clearRect(x-5, y-5, 5, 5)
+    }
+    listenToMouse()
+    function listenToMouse() {
+    
+    cav.onmousedown = function (aaa) {
+        var x = aaa.x
+        var y = aaa.y
+        if (using) {
+            usingEraser(x, y)
+        } else{
+            painting = true
+            lastPoint = {"x" : x, "y" : y}
+        drawCircle(x, y, 4)
+        }
+    }
+    cav.onmousemove = function (aaa) {
+        var x = aaa.x
+        var y = aaa.y
+        newPoint = {x : x, y : y}
+        if(using){
+            usingEraser(newPoint.x, newPoint.y)
+        }else if(painting){
+        //drawCircle(x, y, 2)
+        drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y, 2)
+        }
+        lastPoint = newPoint
+    }
+    cav.onmouseup = function (aaa) {
+        painting = false
+    }
+}
+    
+    
+    
+    
+  </script>
+</body>
+</html>
