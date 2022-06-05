@@ -2,22 +2,20 @@
  * @Author: jiajunwa@outlook.com jiajunwa@outlook.com
  * @Date: 2022-05-30 18:22:43
  * @LastEditors: jiajunwa@outlook.com jiajunwa@outlook.com
- * @LastEditTime: 2022-06-02 14:16:24
+ * @LastEditTime: 2022-06-05 23:26:00
  * @FilePath: \blog\js-learn\index.html
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <title>JS Bin</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <canvas id="cav"></canvas>
-    <canvas id="stockGraph" width="150" height="150">
-        current stock price: $3.15 +0.15
-      </canvas>
       
       <canvas id="clock" width="150" height="150">
 
@@ -109,7 +107,38 @@
     listenToMouse()
     function listenToMouse() {
     
-    cav.onmousedown = function (aaa) {
+    
+    
+    if(document.body.ontouchstart !== undefined){
+        cav.ontouchstart = function(aaa) {
+        var x = aaa.touches[0].clientX
+        var y = aaa.touches[0].clientY
+        if (using) {
+            usingEraser(x, y)
+        } else{
+            painting = true
+            lastPoint = {"x" : x, "y" : y}
+        drawCircle(x, y, 4)
+        }
+    }
+        cav.ontouchmove = function(aaa) {
+        //console.log("正在移动")
+        var x = aaa.touches[0].clientX
+        var y = aaa.touches[0].clientY
+        newPoint = {x : x, y : y}
+        if(using){
+            usingEraser(newPoint.x, newPoint.y)
+        }else if(painting){
+        //drawCircle(x, y, 2)
+        drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y, 2)
+        }
+        lastPoint = newPoint
+    }
+       cav.ontouchend = function(aaa) {
+        painting = false
+    }
+    }else{
+        cav.onmousedown = function (aaa) {
         var x = aaa.x
         var y = aaa.y
         if (using) {
@@ -136,6 +165,9 @@
         painting = false
     }
 }
+    }
+    
+    
     
     
     
