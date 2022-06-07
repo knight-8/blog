@@ -2,13 +2,14 @@
  * @Author: jiajunwa@outlook.com jiajunwa@outlook.com
  * @Date: 2022-05-30 18:22:43
  * @LastEditors: jiajunwa@outlook.com jiajunwa@outlook.com
- * @LastEditTime: 2022-06-05 23:26:00
+ * @LastEditTime: 2022-06-07 15:11:45
  * @FilePath: \blog\js-learn\index.html
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
 -->
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="//at.alicdn.com/t/font_3450696_zm7cg2qrz9q.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="utf-8">
   <title>JS Bin</title>
@@ -21,18 +22,90 @@
 
       </canvas>
       <div id="actions" class="actions">
-        <button id="brush">画笔</button>
-        <button id="eraser">橡皮擦</button>
+        <svg class="icon" id="save">
+            <use xlink:href = "#icon-save"></use>
+        </svg>
+        <svg class="icon" id="clear">
+            <use xlink:href = "#icon-qingkong"></use>
+        </svg>
+        <svg class="icon active" id="brush">
+            <use xlink:href="#icon-qianbi"></use>
+        </svg>
+        <svg class="icon" id="eraser">
+            <use xlink:href="#icon-eraser"></use>
+        </svg>
       </div>
+      <div class="colors">
+          <div id="black" class="active"></div>
+          <div id="brown" class="active"></div>
+          <div id="yellow"></div>
+          <div id="blue"></div>
+      </div>
+      <ol class="sizes">
+          <li id="thin"></li>
+          <li id="thick"></li>
+      </ol>
+      
   <script>
-    
     
     var cav = document.getElementById('cav');
     var cav_cot = cav.getContext('2d')
+    var eraClick = false
     var using = false
     var painting = false
+    var lineWidth = 3
     var lastPoint = {x: undefined, y:undefined}
     var newPoint = {x : undefined, y : undefined}
+
+    black.onclick = function () {
+        cav_cot.strokeStyle = 'black'
+        black.classList.add('active')
+        yellow.classList.remove('active')
+        brown.classList.remove('active')
+        blue.classList.remove('active')
+    }
+    brown.onclick = function () {
+        cav_cot.strokeStyle = 'brown'
+        brown.classList.add('active')
+        yellow.classList.remove('active')
+        blue.classList.remove('active')
+        black.classList.remove('active')
+    }
+    yellow.onclick = function () {
+        cav_cot.strokeStyle = 'yellow'
+        yellow.classList.add('active')
+        blue.classList.remove('active')
+        brown.classList.remove('active')
+        black.classList.remove('active')
+    }
+    blue.onclick = function () {
+        cav_cot.strokeStyle = 'blue'
+        blue.classList.add('active')
+        yellow.classList.remove('active')
+        brown.classList.remove('active')
+        black.classList.remove('active')
+    }
+
+    thin.onclick = function (){
+        lineWidth = 3
+    }
+    thick.onclick = function (){
+        lineWidth = 5
+    }
+
+    clear.onclick = function (){
+        cav_cot.clearRect(0, 0, cav.width, cav.height)
+    }
+
+    save.onclick = function () {
+        var url = cav.toDataURL("image/png")
+        var a = document.createElement('a')
+        document.body.appendChild(a)
+        a.href = url
+        a.download = '我的画作'
+        a.target = '_blank'
+        a.click()
+    }
     
     function autoSetCavSize() {
         function setCavSize(){
@@ -54,7 +127,7 @@
     cav_cot.fillStyle = 'yellow'
     cav_cot.fillRect(20, 10, 90, 80)
 
-    cav_cot.strokeStyle = 'blue'
+    cav_cot.strokeStyle = 'black'
     cav_cot.strokeRect(20, 10, 91, 81)
     
     cav_cot.clearRect(50, 20, 10, 10)
@@ -67,7 +140,6 @@
     cav_cot.stroke()
     
 
-    cav_cot.strokeStyle = 'pink'
     cav_cot.beginPath()
     cav_cot.arc(150, 100, 30, 0, Math.PI/.5)
     cav_cot.arc(150, 100, 20, 0, Math.PI*2)
@@ -82,7 +154,7 @@
     
     function drawLine(x1, y1, x2, y2, width) {
         cav_cot.beginPath()
-        cav_cot.strokeStyle = 'pink'
+        //cav_cot.strokeStyle = 'pink'
         cav_cot.lineWidth = width
         cav_cot.moveTo(x1, y1)
         cav_cot.lineTo(x2, y2)
@@ -91,12 +163,14 @@
     }
 
     eraser.onclick = function() {
-        using = true
-        actions.className = 'actions x'
+        eraClick = true
+        eraser.classList.add('active')
+        brush.classList.remove('active')
     }
     brush.onclick = function() {
-        using = false
-        actions.className = 'actions'
+        eraClick = false
+        brush.classList.add('active')
+        eraser.classList.remove('active')
     }
 
     function usingEraser(x, y) {
@@ -106,14 +180,13 @@
     }
     listenToMouse()
     function listenToMouse() {
-    
-    
-    
+
     if(document.body.ontouchstart !== undefined){
         cav.ontouchstart = function(aaa) {
         var x = aaa.touches[0].clientX
         var y = aaa.touches[0].clientY
-        if (using) {
+        if (eraClick) {
+            using = true
             usingEraser(x, y)
         } else{
             painting = true
@@ -126,22 +199,28 @@
         var x = aaa.touches[0].clientX
         var y = aaa.touches[0].clientY
         newPoint = {x : x, y : y}
-        if(using){
+        if(eraClick && using){
             usingEraser(newPoint.x, newPoint.y)
+            
         }else if(painting){
         //drawCircle(x, y, 2)
-        drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y, 2)
+        drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y, lineWidth)
         }
         lastPoint = newPoint
     }
        cav.ontouchend = function(aaa) {
-        painting = false
+        if(eraClick){
+            using = false
+        }else{
+            painting = false
+        }
     }
     }else{
         cav.onmousedown = function (aaa) {
         var x = aaa.x
         var y = aaa.y
-        if (using) {
+        if (eraClick) {
+            using = true
             usingEraser(x, y)
         } else{
             painting = true
@@ -153,16 +232,20 @@
         var x = aaa.x
         var y = aaa.y
         newPoint = {x : x, y : y}
-        if(using){
+        if(eraClick && using){
             usingEraser(newPoint.x, newPoint.y)
         }else if(painting){
-        //drawCircle(x, y, 2)
-        drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y, 2)
+        drawLine(lastPoint.x, lastPoint.y, newPoint.x, newPoint.y, lineWidth)
         }
         lastPoint = newPoint
     }
     cav.onmouseup = function (aaa) {
-        painting = false
+        if(eraClick){
+            using = false
+        }else{
+            painting = false
+        }
+        
     }
 }
     }

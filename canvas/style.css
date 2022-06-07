@@ -1,22 +1,82 @@
+ol li{
+    list-style: none;
+}
+.icon {
+       width: 1em; height: 1em;
+       vertical-align: -0.15em;
+       fill: currentColor;
+       overflow: hidden;
+}
 body{
     margin:0;
     padding:0;
-}
-#cav{
-    
-    background-color: brown;
+    overflow: hidden;
 }
 .actions{
     position:fixed;
     top:0;
     right:0;
 }
-.actions > #brush{
-    display:none;
+.actions svg{
+    width: 2em;
+    height: 2em;
+    margin:0 10px;
+    cursor:pointer;
+}
+.actions svg.active{
+    transform:scale(1.2);
+    fill:brown;
+    transition: all .3s;
 }
 .actions.x > #brush{
     display: inline-block;
 }
-.actions.x > #eraser{
-    display: none;
+.colors{
+    position:fixed;
+    top:100px;
+    left:25px;
+}
+.colors div{
+    margin: 5px 0;
+    width:10px;
+    height: 10px;
+    border:1px solid grey;
+    border-radius: 5px;
+    cursor:pointer;
+}
+.colors div.active{
+    transform:scale(1.2);
+    transition:all 0.3s;
+}
+.colors div#black{
+    background-color: black;
+}
+.colors div#brown{
+    background-color: brown;
+}
+.colors div#blue{
+    background-color: blue;
+}
+.colors div#yellow{
+    background-color:yellow
+}
+.sizes{
+    position:fixed;
+    top:150px;
+    left:-15px
+}
+.sizes li{
+    margin:5px 0;
+    cursor:pointer;
+}
+.sizes li#thin{
+    height:0;
+    width:20px;
+    border-top:3px solid black
+}
+.sizes li#thick{
+    height:0;
+    width:20px;
+    border-top: 5px solid black;
+    
 }
